@@ -84,6 +84,14 @@ This is the place for you to write reflections:
 
 ### Mandatory (Subscriber) Reflections
 
-#### Reflection Subscriber-1
+## Refleksi Subscriber-1
+
+### 1. Mengapa kita menggunakan `RwLock<Vec<Notification>>`, dan bukan `Mutex<Vec<Notification>>`?
+
+Dalam tutorial ini, kita menggunakan `RwLock<>` untuk menyinkronkan akses ke `Vec<Notification>` karena kita ingin memungkinkan **banyak thread membaca secara bersamaan**, namun tetap membatasi akses tulis hanya satu thread pada satu waktu. `RwLock` (Read-Write Lock) memberi fleksibilitas untuk mengoptimalkan performa saat operasi baca lebih sering dilakukan dibanding tulis. Sementara itu, `Mutex<>` mengunci secara eksklusif bahkan untuk operasi baca, artinya hanya satu thread yang bisa mengakses data, baik untuk membaca maupun menulis. Ini kurang efisien untuk kasus kita, karena pembacaan notifikasi bisa dilakukan oleh banyak subscriber sekaligus tanpa saling mengganggu. Maka dari itu, `RwLock` lebih cocok digunakan pada situasi seperti ini.
+
+### 2. Mengapa Rust tidak memperbolehkan kita memodifikasi `static` variable seperti di Java?
+
+Rust tidak mengizinkan kita langsung memodifikasi `static` variable karena alasan keamanan memory dan **thread safety**. Berbeda dengan Java, Rust menerapkan sistem kepemilikan (*ownership*) dan pengecekan borrow di waktu kompilasi untuk mencegah data race. Variable `static` bersifat global dan bisa diakses dari berbagai tempat sekaligus, yang berarti rentan terhadap kondisi tidak sinkron (race condition) jika tidak dijaga dengan benar. Oleh karena itu, Rust mendorong penggunaan `lazy_static` dikombinasikan dengan `Mutex` atau `RwLock` untuk memastikan bahwa setiap akses terhadap data global bersifat aman dan terkontrol. Ini membuat program kita lebih stabil, aman, dan bebas dari bug yang sulit dilacak akibat akses data global yang sembarangan.
 
 #### Reflection Subscriber-2
