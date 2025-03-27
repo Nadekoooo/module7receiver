@@ -97,4 +97,8 @@ impl NotificationService {
         return Ok(subscriber_result);
     }
     
+    pub fn list_messages() -> Result<Vec<String>> {
+        return Ok(NotificationRepository::list_all_as_string());
+    }
+    
 }
